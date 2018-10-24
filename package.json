@@ -1,0 +1,26 @@
+{
+  "name": "data-etl-prestashop-webservice",
+  "version": "1.0.0",
+  "description": "Connector for PrestaShop WebService",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simonefuoco/data-etl-prestashop-webservice.git"
+  },
+  "keywords": [
+    "prestashop",
+    "data-etl",
+    "data",
+    "etl",
+    "webservice"
+  ],
+  "author": "Simone Fuoco",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/simonefuoco/data-etl-prestashop-webservice/issues"
+  },
+  "homepage": "https://github.com/simonefuoco/data-etl-prestashop-webservice#readme"
+}
