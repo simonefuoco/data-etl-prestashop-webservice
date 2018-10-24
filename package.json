@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/simonefuoco/data-etl-prestashop-webservice/issues"
   },
-  "homepage": "https://github.com/simonefuoco/data-etl-prestashop-webservice#readme"
+  "homepage": "https://github.com/simonefuoco/data-etl-prestashop-webservice#readme",
+  "dependencies": {
+    "prestashop-webservice-client": "^1.0.18"
+  }
 }
