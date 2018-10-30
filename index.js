@@ -55,6 +55,7 @@ class Loader {
 class Extractor extends EventEmitter
 {
     constructor(args) {
+        super();
         this.key = args.key;
         this.ssl = args.ssl;
         this.domain = args.domain;
