@@ -86,19 +86,24 @@ class Extractor extends EventEmitter
             })
             .then((res) => {
                 let promises = [];
-                for (const item of res.response[resource]) {
-                    promises.push(self.cache.createOne(item));
+                if(!Array.isArray(res.response)) {
+                    for (const item of res.response[resource]) {
+                        promises.push(self.cache.createOne(item));
+                    }
                 }
                 if(res.response[resource].length === limit) {
                     self.queryWS(skip + limit, limit, resolve, reject, self);
                 } else {
-                    if(self.emit('data-etl-extractor-ready')) {
-                        resolve();
-                    } else {
-                        reject(new Error("query WS prestashop - no handlers"));
-                    }
+                    Promise.all(promises)
+                    .then(() => {
+                        if(self.emit('data-etl-extractor-ready')) {
+                            resolve();
+                        } else {
+                            reject(new Error("query WS prestashop - no handlers"));
+                        }
+                    })
+                    .catch(new Error("query WS prestashop create one promises all"));
                 }
-                return Promise.all(promises);
             })
             .catch((err) => {
                 reject(new Error("query WS prestashop error"));
