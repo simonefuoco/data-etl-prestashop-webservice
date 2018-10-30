@@ -90,19 +90,19 @@ class Extractor extends EventEmitter
                     for (const item of res.response[resource]) {
                         promises.push(self.cache.createOne(item));
                     }
-                }
-                if(res.response[resource].length === limit) {
-                    self.queryWS(skip + limit, limit, resolve, reject, self);
-                } else {
-                    Promise.all(promises)
-                    .then(() => {
-                        if(self.emit('data-etl-extractor-ready')) {
-                            resolve();
-                        } else {
-                            reject(new Error("query WS prestashop - no handlers"));
-                        }
-                    })
-                    .catch(new Error("query WS prestashop create one promises all"));
+                    if(res.response[resource].length === limit) {
+                        self.queryWS(skip + limit, limit, resolve, reject, self);
+                    } else {
+                        Promise.all(promises)
+                        .then(() => {
+                            if(self.emit('data-etl-extractor-ready')) {
+                                resolve();
+                            } else {
+                                reject(new Error("query WS prestashop - no handlers"));
+                            }
+                        })
+                        .catch(new Error("query WS prestashop create one promises all"));
+                    }
                 }
             })
             .catch((err) => {
