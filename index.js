@@ -104,6 +104,13 @@ class Extractor extends EventEmitter
                         .catch(new Error("query WS prestashop create one promises all"));
                     }
                 }
+                else {
+                    if(self.emit('data-etl-extractor-ready')) {
+                        resolve();
+                    } else {
+                        reject(new Error("query WS prestashop - no handlers - empty response"));
+                    }
+                }
             })
             .catch((err) => {
                 reject(new Error("query WS prestashop error"));
