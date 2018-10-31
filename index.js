@@ -129,11 +129,15 @@ class Extractor extends EventEmitter
     }
 
     extract(obj) {
-        if (!this.cache.isEmpty) {
-            return this.cache.readAndDeleteOne(obj);
-        } else {
-            return false;
-        }
+        let self = this;
+        this.cache.count()
+        .then((count) => {
+            if(!count) return Promise.resolve(false);
+            return self.cache.readAndDeleteOne(obj);
+        })
+        .catch((err) => {
+            Promise.reject(new Error("extract count error"));
+        });
     }
 }
 
