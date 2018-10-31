@@ -142,13 +142,21 @@ class Extractor extends EventEmitter
 
     extract(obj) {
         let self = this;
-        this.cache.count()
-        .then((count) => {
-            if(!count) return Promise.resolve(false);
-            return self.cache.readAndDeleteOne(obj);
-        })
-        .catch((err) => {
-            Promise.reject(new Error("extract count error"));
+        return new Promise((resolve, reject) => {
+            this.cache.count()
+            .then((count) => {
+                if(!count) resolve(false);
+                self.cache.readAndDeleteOne(obj)
+                .then((obj) => {
+                    resolve(obj);
+                })
+                .catch((err) => {
+                    reject(new Error("extract error read and delete cache"));
+                });
+            })
+            .catch((err) => {
+                reject(new Error("extract count error"));
+            });
         });
     }
 }
