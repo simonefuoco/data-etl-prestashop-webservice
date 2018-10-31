@@ -25,7 +25,7 @@ class Loader {
     load(obj) {
         let self = this;
         return new Promise((resolve, reject) => {
-            if (obj['id']) {
+            if (!obj['id']) {
                 self.client.post({
                     resource: self.resource,
                     output_format: 'JSON',
