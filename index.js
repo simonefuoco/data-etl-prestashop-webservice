@@ -31,7 +31,13 @@ class Loader {
                     output_format: 'JSON',
                     body: obj
                 })
-                .then(resolve)
+                .then((res) => {
+                    if (res.status_code !== 201) {
+                        resolve(false);
+                    } else {
+                        resolve(true);
+                    }
+                })
                 .catch((err) => {
                     reject(new Error("error post load ps"));
                 });
@@ -43,7 +49,13 @@ class Loader {
                     output_format: 'JSON',
                     body: obj
                 })
-                .then(resolve)
+                .then((res) => {
+                    if (res.status_code !== 200) {
+                        resolve(false);
+                    } else {
+                        resolve(true);
+                    }
+                })
                 .catch((err) => {
                     reject(new Error("error put load ps"));
                 });
