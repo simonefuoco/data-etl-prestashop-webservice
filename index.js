@@ -25,12 +25,13 @@ class Loader {
     }
 
     load(obj) {
+        let builder = new Builder({cdata:true});
         let self = this;
         return new Promise((resolve, reject) => {
             if (obj.method === "POST") {
                 self.client.post({
                     resource: self.resource,
-                    body: obj.obj
+                    body: builder.buildObject(obj.obj)
                 })
                 .then((res) => {
                     if (res.status_code !== 201) {
@@ -46,7 +47,7 @@ class Loader {
                 self.client.put({
                     resource: self.resource,
                     id: obj.obj.prestashop[self.resourceSingular][0].id[0],
-                    body: obj.obj
+                    body: builder.buildObject(obj.obj)
                 })
                 .then((res) => {
                     if (res.status_code !== 200) {
