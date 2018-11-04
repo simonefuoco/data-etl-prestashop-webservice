@@ -100,7 +100,7 @@ class Extractor extends EventEmitter
             })
             .then((res) => {
                 let promises = [];
-                if(/*!Array.isArray(res.response)*/ res.response.match(/\[]/).length > 0) {
+                if(/*!Array.isArray(res.response)*/ parser.parseString(res.response).prestashop[self.resource].length > 0) {
                     for (const item of parser.parseString(res.response).prestashop[self.resource][0][self.resourceSingular]) {
                         promises.push(self.cache.createOne(item));
                     }
