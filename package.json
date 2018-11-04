@@ -1,6 +1,6 @@
 {
   "name": "data-etl-prestashop-webservice",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Connector for PrestaShop WebService",
   "main": "index.js",
   "scripts": {
@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/simonefuoco/data-etl-prestashop-webservice#readme",
   "dependencies": {
-    "prestashop-webservice-client": "^1.0.18"
+    "prestashop-webservice-client": "^1.0.18",
+    "xml2js": "^0.4.19"
   }
 }

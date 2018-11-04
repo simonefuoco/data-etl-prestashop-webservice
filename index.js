@@ -1,7 +1,9 @@
 const EventEmitter = require('events');
 const Client = new require('prestashop-webservice-client');
+const Parser = require('xml2js').Parser;
+const Builder = require('xml2js').Builder;
 
-class Loader {
+class Loader { 
     constructor(args) {
         this.key = args.key;
         this.ssl = args.ssl;
@@ -25,11 +27,10 @@ class Loader {
     load(obj) {
         let self = this;
         return new Promise((resolve, reject) => {
-            if (!obj['id']) {
+            if (obj.method === "POST") {
                 self.client.post({
                     resource: self.resource,
-                    output_format: 'JSON',
-                    body: obj
+                    body: obj.obj
                 })
                 .then((res) => {
                     if (res.status_code !== 201) {
@@ -41,13 +42,11 @@ class Loader {
                 .catch((err) => {
                     reject(new Error("error post load ps"));
                 });
-            }
-            else {
+            } else if(obj.method === "PUT") {
                 self.client.put({
                     resource: self.resource,
-                    id: obj.id,
-                    output_format: 'JSON',
-                    body: obj
+                    id: obj.obj.prestashop[self.resourceSingular][0].id[0],
+                    body: obj.obj
                 })
                 .then((res) => {
                     if (res.status_code !== 200) {
@@ -73,6 +72,7 @@ class Extractor extends EventEmitter
         this.domain = args.domain;
         this.path = args.path;
         this.resource = args.resource;
+        this.resourceSingular = args.resourceSingular;
         this.query = args.query;
         this.cache = args.cache;
         this.client = new Client(this.url);
@@ -90,6 +90,7 @@ class Extractor extends EventEmitter
     }
 
     queryWS(skip, limit, resolve, reject, self) {
+        let parser = new Parser();
         setTimeout(() => {
             self.query.limit = `${skip},${limit}`;
             self.client.get({
@@ -98,11 +99,11 @@ class Extractor extends EventEmitter
             })
             .then((res) => {
                 let promises = [];
-                if(!Array.isArray(res.response)) {
-                    for (const item of res.response[resource]) {
+                if(/*!Array.isArray(res.response)*/ res.response.match(/\[]/).length > 0) {
+                    for (const item of parser.parseString(res.response).prestashop[self.resource][0][self.resourceSingular]) {
                         promises.push(self.cache.createOne(item));
                     }
-                    if(res.response[resource].length === limit) {
+                    if(parser.parseString(res.response).prestashop[self.resource][0][self.resourceSingular].length === limit) {
                         self.queryWS(skip + limit, limit, resolve, reject, self);
                     } else {
                         Promise.all(promises)
