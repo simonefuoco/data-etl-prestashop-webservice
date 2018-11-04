@@ -100,31 +100,33 @@ class Extractor extends EventEmitter
             })
             .then((res) => {
                 let promises = [];
-                if(/*!Array.isArray(res.response)*/ parser.parseString(res.response).prestashop[self.resource].length > 0) {
-                    for (const item of parser.parseString(res.response).prestashop[self.resource][0][self.resourceSingular]) {
-                        promises.push(self.cache.createOne(item));
+                parser.parseString(res.response, (err, result) =>  {
+                    if(/*!Array.isArray(res.response)*/ result.prestashop[self.resource].length > 0) {
+                        for (const item of result.prestashop[self.resource][0][self.resourceSingular]) {
+                            promises.push(self.cache.createOne(item));
+                        }
+                        if(result.prestashop[self.resource][0][self.resourceSingular].length === limit) {
+                            self.queryWS(skip + limit, limit, resolve, reject, self);
+                        } else {
+                            Promise.all(promises)
+                            .then(() => {
+                                if(self.emit('data-etl-extractor-ready')) {
+                                    resolve();
+                                } else {
+                                    reject(new Error("query WS prestashop - no handlers"));
+                                }
+                            })
+                            .catch(new Error("query WS prestashop create one promises all"));
+                        }
                     }
-                    if(parser.parseString(res.response).prestashop[self.resource][0][self.resourceSingular].length === limit) {
-                        self.queryWS(skip + limit, limit, resolve, reject, self);
-                    } else {
-                        Promise.all(promises)
-                        .then(() => {
-                            if(self.emit('data-etl-extractor-ready')) {
-                                resolve();
-                            } else {
-                                reject(new Error("query WS prestashop - no handlers"));
-                            }
-                        })
-                        .catch(new Error("query WS prestashop create one promises all"));
+                    else {
+                        if(self.emit('data-etl-extractor-ready')) {
+                            resolve();
+                        } else {
+                            reject(new Error("query WS prestashop - no handlers - empty response"));
+                        }
                     }
-                }
-                else {
-                    if(self.emit('data-etl-extractor-ready')) {
-                        resolve();
-                    } else {
-                        reject(new Error("query WS prestashop - no handlers - empty response"));
-                    }
-                }
+                });
             })
             .catch((err) => {
                 reject(new Error("query WS prestashop error"));
