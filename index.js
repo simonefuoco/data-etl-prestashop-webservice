@@ -1,7 +1,7 @@
 const EventEmitter = require('events');
 const Client = new require('prestashop-webservice-client');
 const Parser = require('xml2js').Parser;
-const Builder = require('xml2js').Builder;
+const Builder = require('xml2js').Builder; 
 
 class Loader { 
     constructor(args) {
